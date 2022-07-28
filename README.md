@@ -13,8 +13,8 @@ A python quick made tool to render journeymap's files to a jpg
 
 
 ### Dependencies :
-os
-json
-PIL (Image, ImageDraw)
-PyQt5 (QtGui)
-PyQt5.QtWidgets
+- os
+- json
+- PIL (Image, ImageDraw)
+- PyQt5 (QtGui)
+- PyQt5.QtWidgets
