@@ -21,6 +21,7 @@ def calcpos(posox,posoy,midx,midy):
     return posax,posay
 
 def render(dir_path,dimrend,typ,wayp):
+    logtobox("Rendu en cours ...")
     print(dir_path+'\\'+dimrend+'\\'+typ)
     for path in os.listdir(dir_path+'\\'+dimrend+'\\'+typ):
         if os.path.isfile(os.path.join(dir_path+'\\'+dimrend+'\\'+typ, path)):
@@ -35,6 +36,9 @@ def render(dir_path,dimrend,typ,wayp):
 
     print("IMAGE SIZE :")
     print(lenx,leny)
+    logtobox("Taille de l'image :")
+    logtobox(str(lenx)+"px, "+str(leny)+"px")
+    
 
     bg = Image.new('RGB', (lenx, leny),'black')
 
@@ -42,18 +46,26 @@ def render(dir_path,dimrend,typ,wayp):
         posx = path.split(",")[0]
         posy = path.split(",")[1].split(".")[0]
         if os.path.isfile(dir_path+'\\'+dimrend+'\\'+typ+'\\'+path):
-            im = Image.open(dir_path+'\\'+dimrend+'\\'+typ+'\\'+path)
-            print(posx,posy)
-            px,py = calcpos(float(posx),float(posy),midx,midy)
-            bg.paste(im, (int(px), int(py)))
+            if path.endswith('.png'):
+                im = Image.open(dir_path+'\\'+dimrend+'\\'+typ+'\\'+path)
+                print(posx,posy)
+                logtobox(str(posx)+", "+str(posy))
+                px,py = calcpos(float(posx),float(posy),midx,midy)
+                bg.paste(im, (int(px), int(py)))
 
     if wayp:
-        print('waypoints')
+        logtobox('créations des waypoints')
 
 
-
-    bg.save('DEBUG.png')
-    print('finished')
+    
+    
+    logtobox('Rendu fini !')
+    file , check = QFileDialog.getSaveFileName(None, "Enregistrer sous", "", "Image Files (*.png)")
+    if check:
+        print(file)
+        logtobox("Enregistrement de l'image ...")
+        bg.save(file)
+        logtobox('oké !')
     #rendered = Image.open('DEBUG.png')
     #rendered.show()
 
@@ -133,10 +145,18 @@ renbut = QPushButton('Render')
 renbut.move(300,300)
 layout.addWidget(renbut, 3, 3)
 
+logbox = QPlainTextEdit("")
+#logbox.setEnabled(False)
+layout.addWidget(logbox, 4, 3)
 
 
+def logtobox(contents):
+    logbox.insertPlainText(str(contents)+"\r\n")
+    logbox.verticalScrollBar().setValue(logbox.verticalScrollBar().maximum())
+    app.processEvents()
 
 def on_render():
+    print('rendering')
     ways = False
     if waypcb.isChecked():
         ways = True
@@ -150,7 +170,7 @@ def on_render():
 
     render(os.getenv('APPDATA')+'\.lk\instances\LostKingdoms-1.12.2\journeymap\data\mp\LostKingdoms',dimconv(dimlist.currentText()), rendtyp, ways)
 
-    print('rendering')
+    
 
 
 
