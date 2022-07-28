@@ -1,6 +1,6 @@
-from ast import For
 import os
-from PIL import Image
+import json
+from PIL import Image, ImageDraw
 #from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
@@ -13,10 +13,17 @@ pox = []
 poy = []
 midx = 0
 midy = 0
+
 def calcpos(posox,posoy,midx,midy):
     n = 0
     posax = midx*512 + posox*512
     posay = midy*512 + posoy*512
+    #print(posox, posoy, posax, posay)
+    return posax,posay
+
+def calcwp(posox,posoy,midx,midy):
+    posax = midx*512 + posox
+    posay = midy*512 + posoy
     #print(posox, posoy, posax, posay)
     return posax,posay
 
@@ -54,8 +61,19 @@ def render(dir_path,dimrend,typ,wayp):
                 bg.paste(im, (int(px), int(py)))
 
     if wayp:
+        paint = ImageDraw.Draw(bg)
         logtobox('créations des waypoints')
-
+        for path in os.listdir(os.getenv('APPDATA')+'\.lk\instances\LostKingdoms-1.12.2\journeymap\data\mp\LostKingdoms\waypoints'):
+            print(path)
+            if path.endswith('.json'):
+                data = json.load(open(os.getenv('APPDATA')+'\.lk\instances\LostKingdoms-1.12.2\journeymap\data\mp\LostKingdoms\waypoints\\'+path))
+                #print(data)
+                for i in data['dimensions']:
+                    if dimrend != 'DIM'+str(i):
+                        break
+                    logtobox('Point GPS trouvé: '+path.split('.json')[0])
+                    wpx,wpy = calcwp(data['x'],data['z'],midx,midy)
+                    paint.ellipse((wpx-50, wpy-50, wpx+50, wpy+50), fill=(data['r'], data['g'], data['b']), outline=(data['r'], data['g'], data['b']))
 
     
     
