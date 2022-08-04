@@ -1,7 +1,8 @@
-# LK-journeymap-render
+# Journeymap-render
 A python quick made tool to render journeymap's files to a jpg
 
 ### Features :
+- choose your minecraft folder
 - Choose which dimension you want to render
 - Choose rendering method (day/night/topology)
 - Render waypoints on map
